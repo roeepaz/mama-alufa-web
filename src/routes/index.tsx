@@ -8,13 +8,13 @@ import { resolveImage, type Dish } from "@/data/siteData";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "אמא אלופה — אוכל ביתי שכולם אוהבים | בנימינה" },
+      { title: "אמא אלופה - אוכל ביתי שכולם אוהבים | בנימינה" },
       {
         name: "description",
         content:
           "אמא אלופה, השריג 2 בנימינה: אוכל ביתי כשר בהשגחת הרבנות, לשבת במקום, לקחת או משלוח בוולט. פתוח א׳-ה׳ 8:30-19:00, ו׳ 8:00-14:00.",
       },
-      { property: "og:title", content: "אמא אלופה — אוכל ביתי שכולם אוהבים" },
+      { property: "og:title", content: "אמא אלופה - אוכל ביתי שכולם אוהבים" },
       {
         property: "og:description",
         content:
@@ -155,7 +155,7 @@ function Index() {
           </span>
           <img
             src={resolveImage("logo")}
-            alt="אמא אלופה — אוכל ביתי שכולם אוהבים"
+            alt="אמא אלופה - אוכל ביתי שכולם אוהבים"
             width={320}
             height={320}
             className={`mt-6 h-auto w-56 rounded-2xl shadow-2xl sm:w-72 transition-all duration-1000 ease-out delay-200 ${heroEntered ? "opacity-100 scale-100" : "opacity-0 scale-90"}`}
@@ -299,7 +299,7 @@ function Index() {
             className={`overflow-hidden rounded-3xl border border-border shadow-sm ${revealClass(locationMap.isRevealed, "slide-left", 120)}`}
           >
             <iframe
-              title={`מפת הדרך לאמא אלופה — ${texts.locationAddress}`}
+              title={`מפת הדרך לאמא אלופה - ${texts.locationAddress}`}
               src={`https://www.google.com/maps?q=${settings.mapQuery}&hl=iw&z=16&output=embed`}
               loading="lazy"
               className="h-80 w-full lg:h-full"

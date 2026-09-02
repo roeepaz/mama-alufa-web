@@ -3,6 +3,7 @@
 // localStorage persistence helpers. The default values mirror the original
 // hard-coded content so the site works identically out of the box.
 
+import { supabase } from "@/lib/supabase";
 import logoAsset from "@/assets/ama-alufa-logo.png";
 import heroTable from "@/assets/dish-stuffed.jpg";
 import dishStew from "@/assets/dish-stew.jpg";
@@ -130,7 +131,7 @@ export const DEFAULT_GALLERY: GalleryItem[] = [
     id: "g1",
     img: "gallery-couscous",
     alt: "קוסקוס ותבשילים חמים במגשי הגשה",
-    caption: "מגשי הגשה חמים — קוסקוס, כדורי פלאפל ועוד",
+    caption: "מגשי הגשה חמים - קוסקוס, כדורי פלאפל ועוד",
   },
   {
     id: "g2",
@@ -143,19 +144,19 @@ export const DEFAULT_GALLERY: GalleryItem[] = [
 export const DEFAULT_TEXTS: SiteTexts = {
   heroKashrut: "כשר בהשגחת הרבנות בנימינה–גבעת עדה",
   heroTitle: "אמא אלופה - אוכל ביתי שמבושל באהבה",
-  heroSubtitle: "אוכל ביתי טרי וכשר — לישיבה במקום או לקחת. השריג 2, בנימינה, מתחם קניות הפיל.",
+  heroSubtitle: "אוכל ביתי טרי וכשר - לישיבה במקום או לקחת. השריג 2, בנימינה, מתחם קניות הפיל.",
   heroCta1: "הזמינו עכשיו בוולט",
   heroCta2: "לתפריט",
   aboutKicker: "הסיפור שלנו",
   aboutTitle: "כמו שאמא הייתה מכינה",
-  aboutP1: "אצלנו כל צלחת יוצאת מהמטבח כמו שאמא הייתה מכינה — עם הרבה אהבה, בלי קיצורי דרך.",
-  aboutP2: "מבשלים כאן כל יום מחדש, מחומרים טריים, בסירים גדולים ובלי אבקות. זו לא מסעדה — זה הבית של אמא, ותמיד יש בו מקום בשולחן.",
+  aboutP1: "אצלנו כל צלחת יוצאת מהמטבח כמו שאמא הייתה מכינה - עם הרבה אהבה, בלי קיצורי דרך.",
+  aboutP2: "מבשלים כאן כל יום מחדש, מחומרים טריים, בסירים גדולים ובלי אבקות. זו לא מסעדה - זה הבית של אמא, ותמיד יש בו מקום בשולחן.",
   kashrut: "כשרות",
   kashrutDetail: "אוכל ביתי כשר בהשגחת הרבנות המקומית בנימינה–גבעת עדה.",
   menuKicker: "טעימה מהתפריט",
   menuTitle: "המנות שכולם חוזרים אליהן",
-  menuNote: "התפריט מתחלף לפי מה שטרי ומה שהתבשל היום — שווה לשאול מה יצא מהתנור.",
-  menuGalleryLink: "לתמונות נוספות מהמטבח — לגלריה",
+  menuNote: "התפריט מתחלף לפי מה שטרי ומה שהתבשל היום - שווה לשאול מה יצא מהתנור.",
+  menuGalleryLink: "לתמונות נוספות מהמטבח - לגלריה",
   galleryKicker: "מהמטבח",
   galleryTitle: "רגעים מהשירותים שלנו",
   locationKicker: "איפה אנחנו",
@@ -164,9 +165,9 @@ export const DEFAULT_TEXTS: SiteTexts = {
   locationArea: "מתחם קניות הפיל",
   deliveryNote: "משלוחים דרך וולט באותן שעות פתיחה.",
   ctaTitle: "בואו לשבת אצלנו, או תנו לוולט להביא לכם הביתה",
-  ctaSubtitle: "רוצים לאכול אצלנו? אצלנו תמיד יש מקום בשולחן. וגם אפשר לקחת — אורזים לך חם ומוכן.",
+  ctaSubtitle: "רוצים לאכול אצלנו? אצלנו תמיד יש מקום בשולחן. וגם אפשר לקחת - אורזים לך חם ומוכן.",
   ctaCta1: "להזמנת משלוח בוולט",
-  ctaCta2: "לאיסוף עצמי — איך מגיעים",
+  ctaCta2: "לאיסוף עצמי - איך מגיעים",
   footerAddress: "השריג 2, בנימינה",
   footerArea: "מתחם קניות הפיל",
   footerKashrut: "כשר בהשגחת הרבנות המקומית בנימינה–גבעת עדה · הכשרות באחריות העסק",
@@ -185,17 +186,22 @@ export const DEFAULT_SITE_DATA: SiteData = {
   settings: DEFAULT_SETTINGS,
 };
 
-/* ─── localStorage Persistence ─── */
+/* ─── Supabase Persistence ─── */
 
-const STORAGE_KEY = "ama-alufa-site-data";
-
-export function loadSiteData(): SiteData {
-  if (typeof window === "undefined") return DEFAULT_SITE_DATA;
+export async function loadSiteData(): Promise<SiteData> {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_SITE_DATA;
-    const parsed = JSON.parse(raw) as Partial<SiteData>;
-    // Merge with defaults so new fields always have a value
+    const { data, error } = await supabase
+      .from("site_data")
+      .select("data")
+      .eq("id", "main")
+      .single();
+
+    if (error || !data) {
+      console.warn("Failed to load site data from Supabase or not found, falling back to defaults.", error);
+      return DEFAULT_SITE_DATA;
+    }
+    
+    const parsed = data.data as Partial<SiteData>;
     return {
       dishes: parsed.dishes ?? DEFAULT_SITE_DATA.dishes,
       openingHours: parsed.openingHours ?? DEFAULT_SITE_DATA.openingHours,
@@ -203,17 +209,37 @@ export function loadSiteData(): SiteData {
       texts: { ...DEFAULT_SITE_DATA.texts, ...parsed.texts },
       settings: { ...DEFAULT_SITE_DATA.settings, ...parsed.settings },
     };
-  } catch {
+  } catch (err) {
+    console.error("Error loading site data:", err);
     return DEFAULT_SITE_DATA;
   }
 }
 
-export function saveSiteData(data: SiteData): void {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+export async function saveSiteData(siteData: SiteData): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from("site_data")
+      .upsert({ id: "main", data: siteData });
+      
+    if (error) {
+      console.error("Error saving site data:", error);
+    }
+  } catch (err) {
+    console.error("Exception saving site data:", err);
+  }
 }
 
-export function resetSiteData(): void {
-  if (typeof window === "undefined") return;
-  localStorage.removeItem(STORAGE_KEY);
+export async function resetSiteData(): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from("site_data")
+      .delete()
+      .eq("id", "main");
+      
+    if (error) {
+      console.error("Error resetting site data:", error);
+    }
+  } catch (err) {
+    console.error("Exception resetting site data:", err);
+  }
 }

@@ -13,7 +13,7 @@ type RevealOptions = {
  * Attaches an IntersectionObserver to a ref and returns whether the
  * element is "revealed" (i.e. has scrolled into view).
  *
- * Respects `prefers-reduced-motion` — when the user prefers reduced
+ * Respects `prefers-reduced-motion` - when the user prefers reduced
  * motion the hook immediately returns `true` so every element renders
  * without an animation.
  */
@@ -100,7 +100,7 @@ export function revealClass(
 }
 
 /**
- * Stagger helper — returns the delay in ms for the nth item in a list,
+ * Stagger helper - returns the delay in ms for the nth item in a list,
  * with a configurable base offset and per-item increment.
  */
 export function staggerDelay(index: number, baseMs = 0, incrementMs = 80): number {

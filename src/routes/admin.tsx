@@ -40,7 +40,7 @@ import {
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "ניהול אתר — אמא אלופה" },
+      { title: "ניהול אתר - אמא אלופה" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

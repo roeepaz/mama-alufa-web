@@ -1,6 +1,6 @@
 // ─── Site Data Context ──────────────────────────────────────────────────────
 // Provides all editable site content to the component tree and exposes update
-// functions. Data is persisted to localStorage automatically on every update.
+// functions. Data is persisted to Supabase automatically on every update.
 
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import {
@@ -18,6 +18,7 @@ import {
 
 interface SiteDataContextValue {
   data: SiteData;
+  isLoading: boolean;
   updateDishes: (dishes: Dish[]) => void;
   updateOpeningHours: (hours: OpeningHoursEntry[]) => void;
   updateGallery: (gallery: GalleryItem[]) => void;
@@ -30,10 +31,18 @@ const SiteDataContext = createContext<SiteDataContextValue | null>(null);
 
 export function SiteDataProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<SiteData>(DEFAULT_SITE_DATA);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load from localStorage on mount (client-side only)
+  // Load from Supabase on mount
   useEffect(() => {
-    setData(loadSiteData());
+    let mounted = true;
+    loadSiteData().then((fetchedData) => {
+      if (mounted) {
+        setData(fetchedData);
+        setIsLoading(false);
+      }
+    });
+    return () => { mounted = false; };
   }, []);
 
   const persist = useCallback((next: SiteData) => {
@@ -77,6 +86,7 @@ export function SiteDataProvider({ children }: { children: ReactNode }) {
     <SiteDataContext.Provider
       value={{
         data,
+        isLoading,
         updateDishes,
         updateOpeningHours,
         updateGallery,
@@ -85,7 +95,13 @@ export function SiteDataProvider({ children }: { children: ReactNode }) {
         resetToDefaults,
       }}
     >
-      {children}
+      {isLoading ? (
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+        </div>
+      ) : (
+        children
+      )}
     </SiteDataContext.Provider>
   );
 }
