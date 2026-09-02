@@ -147,7 +147,7 @@ function Index() {
           style={{ transform: "scale(1.05)" }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/80 via-foreground/60 to-foreground/85" />
-        <div className="relative mx-auto flex min-h-[92svh] max-w-3xl flex-col items-center justify-center px-5 py-20 text-center">
+        <div className="relative mx-auto flex min-h-[100svh] max-w-3xl flex-col items-center justify-center px-5 py-20 text-center">
           <span
             className={`rounded-full border border-cream/40 px-4 py-1 text-sm text-cream transition-all duration-700 ease-out ${heroEntered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
           >
