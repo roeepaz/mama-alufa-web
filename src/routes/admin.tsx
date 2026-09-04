@@ -50,7 +50,7 @@ export const Route = createFileRoute("/admin")({
 /* ─────────────────────────────────  Auth Helper  ───────────────────────────────── */
 
 const ADMIN_PASS_KEY = "ama_alufa_admin_password";
-const DEFAULT_PASSWORD = "mama2024";
+const DEFAULT_PASSWORD = import.meta.env["VITE_DEFAULT_PASSWORD"] || "";
 
 function getStoredPassword(): string {
   if (typeof window === "undefined") return DEFAULT_PASSWORD;
@@ -150,7 +150,6 @@ function AdminPage() {
                   setPasswordInput(e.target.value);
                   setAuthError("");
                 }}
-                placeholder="הזן סיסמה (ברירת מחדל: mama2024)"
                 className="w-full rounded-xl border border-border bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 autoFocus
               />
